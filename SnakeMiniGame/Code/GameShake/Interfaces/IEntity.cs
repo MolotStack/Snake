@@ -1,24 +1,14 @@
-﻿
-using SnakeMiniGame.Code.GameShake.Utilits;
+﻿using SnakeMiniGame.Code.GameShake.Utilits;
 
 namespace SnakeMiniGame.Code.GameShake.Interfaces
 {
-    public abstract class IEntity
+    public interface IEntity
     {
-        public Vector2Int position;
-        public char[,] sprite;
-        public bool isInteraction;
-        public bool isPassable;
+        public Vector2Int CurrentPosition { get; }
+        public Vector2Int LastPosition { get; }
 
-        public ConsoleColor color;
-
-        public IEntity(Vector2Int position, char[,] sprite, bool isInteraction, bool isPassable, ConsoleColor color)
-        {
-            this.position = position;
-            this.sprite = sprite;
-            this.isInteraction = isInteraction;
-            this.isPassable = isPassable;
-            this.color = color;
-        }
+        public char[,] Sprite {  get; }
+        public ConsoleColor Color { get; }
+        public ConsoleColor BackgroundColor { get; }
     }
 }

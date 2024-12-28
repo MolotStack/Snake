@@ -1,6 +1,7 @@
 ﻿using SnakeMiniGame.Code;
-    public interface IInput
-    {
-        public Direction Direction { get;}
+using SnakeMiniGame.Code.GameShake.Utilits;
+public interface IInput
+{
+        public Vector2Int Direction { get;}
     }
 

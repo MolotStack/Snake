@@ -1,59 +1,78 @@
-﻿
-using SnakeMiniGame.Code.Game;
-using SnakeMiniGame.Code.GameShake.Interfaces;
-using System;
-using System.Diagnostics;
+﻿using SnakeMiniGame.Code.GameShake.Interfaces;
+using SnakeMiniGame.Code.GameShake.Snake;
+using SnakeMiniGame.Code.GameShake.Utilits;
 
 namespace SnakeMiniGame.Code.GameShake
 {
     public class Renderer
     {
-        private const int _heightCells = 50;
-        private const int _widthCells = 50;
+        private string _direction;
 
-        private int[,] screen = new int[_heightCells, _widthCells];
+        private int _sizeMapY;
+        private int _sizeMapX;
+        private int _sizeCells;
 
-        private Direction current;
+        private bool _isRenderingMap = false;
 
-        public void Render(IEntity[,] map)
+        private ILevel _level;
+
+        public void Render(ILevel level, int sizyCells)
         {
-            Console.Clear();
+            _level = level;
+
+            _sizeCells = sizyCells;
+
+            _sizeMapY = _level.Map.GetLength(0) * _sizeCells;
+            _sizeMapX = _level.Map.GetLength(1) * _sizeCells;
+
             Console.CursorVisible = false;
 
-            IEntity[,] currentMap = map;
+            //InfoRender();
 
-            InfoRender();
-
-            int indexY = 0;
-            int offestY = 3;
-
-            for (int i = 0; i < currentMap.GetLength(0); i++)
+            if (!_isRenderingMap)
             {
-                indexY = offestY + (i * 3);
-                int indexX = 0;
-                for (int j = 0; j < currentMap.GetLength(1); j++)
-                {
-                    indexX = j * 3;
-                    Console.SetCursorPosition(indexX, indexY);
-                    EntityRender(currentMap[i,j], indexX, indexY);
-;
-                }
+                RenderAllStaticMap(level);
+
+                _isRenderingMap = true;
             }
 
-            DebugRender(indexY);
+            RanderSnake(_level.Snake);
+
+            DebugRender(_sizeMapY);
         }
 
-        private void EntityRender(IEntity entity, int pointX , int pointY)
+        private void RenderAllStaticMap(ILevel level)
         {
-            for (int i = 0; i < entity.sprite.GetLength(0); i++)
+            for (int i = 0; i < _level.Map.GetLength(0); i++)
             {
-                for (int j = 0; j < entity.sprite.GetLength(1); j++)
+                for (int j = 0; j < _level.Map.GetLength(1); j++)
                 {
-                    Console.BackgroundColor = entity.color;
-                    Console.Write(entity.sprite[i, j]);
+                    Console.SetCursorPosition(_level.Map[i, j].position.x, _level.Map[i, j].position.y);
+                    Console.BackgroundColor = _level.Map[i, j].colorBackground;
+                    Console.ForegroundColor = _level.Map[i, j].color;
+
+                    for (int x = 0; x < _level.Map[i, j].sprite.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < _level.Map[i, j].sprite.GetLength(1); y++)
+                        {
+                            Console.Write(_level.Map[i, j].sprite[x, y]);
+                        }
+                    }
+
                 }
-                Console.SetCursorPosition(pointX,  ++pointY);
             }
+        }
+
+        private void RanderSnake(IEntity entity)
+        {
+            Console.SetCursorPosition(entity.LastPosition.x, entity.LastPosition.y);
+            Console.BackgroundColor = entity.BackgroundColor;
+            Console.ForegroundColor = entity.Color;
+            Console.Write(" ");
+
+            Console.SetCursorPosition(entity.CurrentPosition.x, entity.CurrentPosition.y);
+
+            Console.Write(entity.Sprite[0, 0]);
         }
 
         private void InfoRender()
@@ -64,13 +83,16 @@ namespace SnakeMiniGame.Code.GameShake
         private void DebugRender(int pointY)
         {
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.SetCursorPosition(0, pointY + 2);
+            Console.WriteLine("________________________________________________________");
+            Console.WriteLine("                                                        ");
             Console.SetCursorPosition(0, pointY + 3);
-            Console.WriteLine("Направление движения: " + current);
+            Console.WriteLine("Направление движения: " + _direction);
         }
 
         public void Debug(IInput input)
         {
-            current = input.Direction;
+            _direction = input.Direction.ToString();
         }
     }
 }

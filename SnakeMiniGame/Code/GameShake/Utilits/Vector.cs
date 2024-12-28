@@ -1,13 +1,15 @@
 ﻿
 
+using System.Diagnostics.Metrics;
+
 namespace SnakeMiniGame.Code.GameShake.Utilits
 {
     public struct Vector2Int
     {
-        public static Vector2Int up = new Vector2Int(0, -1);
+        public static Vector2Int up = new Vector2Int(0, 1);
         public static Vector2Int down = new Vector2Int(0, -1);
-        public static Vector2Int left = new Vector2Int(0, -1);
-        public static Vector2Int right = new Vector2Int(0, -1);
+        public static Vector2Int left = new Vector2Int(-1, 0);
+        public static Vector2Int right = new Vector2Int(1, 0);
         public static Vector2Int zero = new Vector2Int(0, 0);
 
 
@@ -20,13 +22,14 @@ namespace SnakeMiniGame.Code.GameShake.Utilits
             this.y = y;
         }
 
-        public bool Equals(Vector2Int other)
+        public static Vector2Int operator + (Vector2Int vector2Int_1, Vector2Int vector2Int_2)
         {
-            if (ReferenceEquals(other, null))
-            {
-                return false;
-            }
-            return other.x.Equals(x) && other.y.Equals(y);
+            return new Vector2Int(vector2Int_1.x + vector2Int_2.x, vector2Int_1.y + vector2Int_2.y);
+        }
+
+        public override string ToString()
+        {
+            return $"X = {x}, Y = {y}";
         }
     }
 }

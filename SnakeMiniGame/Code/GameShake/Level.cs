@@ -1,62 +1,87 @@
 ﻿
+using SnakeMiniGame.Code.GameShake.Cells;
 using SnakeMiniGame.Code.GameShake.Interfaces;
+using SnakeMiniGame.Code.GameShake.Snake;
+using SnakeMiniGame.Code.GameShake.Utilits;
 
 namespace SnakeMiniGame.Code.Game
 {
-    public class Level
+    public class Level : ILevel
     {
-        public IEntity[,] map;
+        public ICells[,] Map => _map;
+        public IEntity Snake => _snake;
 
-        private IEntity _baseWall;
-        private IEntity _baseGround;
+        private ICells[,] _map;
+        public Snake _snake;
 
-        public Level(int heightCells, int widthCells, IEntity baseWall, IEntity baseGround)
+        private ICells _baseWall;
+        private ICells _baseGround;
+
+        private InputHandler _inputHandler;
+
+        public Level(int heightCells, int widthCells, ICells baseWall, ICells baseGround, InputHandler input)
         {
-            map = new IEntity[heightCells, widthCells];
+            _map = new ICells[heightCells, widthCells];
 
             _baseWall = baseWall;
             _baseGround = baseGround;
+
+            _inputHandler = input;
         }
 
 
+        public void Update(float deltaTime)
+        {
+            _snake.Update(deltaTime);
+        }
 
         public void Generation()
         {
-            GenerationLevel(_baseWall, _baseGround);
+            GenerationLevel();
         }
 
-        public IEntity[,] GetMap()
+        public ICells[,] GetMap()
         {
-            return map;
+            return _map;
         }
 
-        private void GenerationLevel(IEntity wall, IEntity floor)
+        private void GenerationLevel()
         {
-            for (int i = 0; i < map.GetLength(0); i++) 
+            for (int i = 0; i < _map.GetLength(0); i++) 
             {
-                if (i == 0 || i == map.GetLength(0) - 1)
+                if (i == 0 || i == _map.GetLength(0) - 1)
                 {
-                    for (int j = 0; j < map.GetLength(1); j++)
+                    for (int j = 0; j < _map.GetLength(1); j++)
                     {
-                        map[i, j] = wall;
+                        SpawnEntity(i, j, _baseWall);
                     }
                 }
                 else 
                 {
-                    for(int j = 0;j < map.GetLength(1); j++)
+                    for(int j = 0;j < _map.GetLength(1); j++)
                     {
-                        if(j == 0 || j == map.GetLength(1) - 1)
+                        if(j == 0 || j == _map.GetLength(1) - 1)
                         {
-                            map[i, j] = wall;
+                            SpawnEntity(i,j, _baseWall);
                         }else
                         {
-                            map[i, j] = floor;
+                            SpawnEntity(i, j, _baseGround);
                         }
                     }
                 }
-
             }
+
+            SpawnSnake(new Vector2Int(_map.GetLength(1) / 2, _map.GetLength(0) / 2));
+        }
+        
+        private void SpawnEntity(int i, int j, ICells cells)
+        {
+            _map[i, j] = new Cell(new Vector2Int(j,i), cells.sprite, cells.isWall, cells.color, cells.colorBackground );
         }
 
+        private void SpawnSnake(Vector2Int position)
+        {
+            _snake = new Snake(this, _inputHandler, position, new char[,] { { '*' } }, ConsoleColor.Green, ConsoleColor.DarkGray);
+        }
     }
 }

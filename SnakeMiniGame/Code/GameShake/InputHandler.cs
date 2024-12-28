@@ -1,12 +1,14 @@
 ﻿
+using SnakeMiniGame.Code.GameShake.Utilits;
+
 namespace SnakeMiniGame.Code
 {
     public class InputHandler : IInput
     {
-        public Direction Direction => _currentDirection;
+        public Vector2Int Direction => _currentDirection;
         public Action CloseGame; 
 
-        private Direction _currentDirection = Direction.Left;
+        private Vector2Int _currentDirection = Vector2Int.left;
 
         public void GetDirection()
         {
@@ -16,20 +18,19 @@ namespace SnakeMiniGame.Code
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.UpArrow: _currentDirection = Direction.Up; break;
-                    case ConsoleKey.W: _currentDirection = Direction.Up; break;
+                    case ConsoleKey.UpArrow: _currentDirection = Vector2Int.down; break;
+                    case ConsoleKey.W: _currentDirection = Vector2Int.down; break;
 
-                    case ConsoleKey.DownArrow: _currentDirection = Direction.Down; break;
-                    case ConsoleKey.S: _currentDirection = Direction.Down; break;
+                    case ConsoleKey.DownArrow: _currentDirection = Vector2Int.up; break;
+                    case ConsoleKey.S: _currentDirection = Vector2Int.up; break;
 
-                    case ConsoleKey.LeftArrow: _currentDirection = Direction.Left; break;
-                    case ConsoleKey.A: _currentDirection = Direction.Left; break;
+                    case ConsoleKey.LeftArrow: _currentDirection = Vector2Int.left; break;
+                    case ConsoleKey.A: _currentDirection = Vector2Int.left; break;
 
-                    case ConsoleKey.RightArrow: _currentDirection = Direction.Right; break;
-                    case ConsoleKey.D: _currentDirection = Direction.Right; break;
+                    case ConsoleKey.RightArrow: _currentDirection = Vector2Int.right; break;
+                    case ConsoleKey.D: _currentDirection = Vector2Int.right; break;
 
                     case ConsoleKey.Escape:
-                        Environment.Exit(0);
                         CloseGame?.Invoke();
                     break;
 

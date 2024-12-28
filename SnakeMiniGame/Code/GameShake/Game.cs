@@ -13,15 +13,17 @@ namespace SnakeMiniGame.Code.GameShake
         private Renderer _render;
         private Level _level1;
 
-        private BaseWall _wall = new BaseWall(Vector2Int.zero, new char[,] { { '#', '#', '#' }, { '#', '#', '#' }, { '#', '#', '#' } }, false, false, ConsoleColor.Red);
+        private Cell _wall = new Cell(Vector2Int.zero, new char[,] { { '#' } }, true,ConsoleColor.Blue, ConsoleColor.Black);
 
-        private BaseFloor _floor = new(Vector2Int.zero, new char[,] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } }, false, true, ConsoleColor.DarkGray);
+        private Cell _floor = new Cell(Vector2Int.zero, new char[,] { { ' ' } }, false, ConsoleColor.White, ConsoleColor.DarkGray);
+
+        //private Entity _snake = new Entity(Vector2Int.zero, new char[,] { {'■'} },false, false, ConsoleColor.Green, ConsoleColor.DarkGray);
 
         public Game()
         {
             _inputHandler = new InputHandler();
             _render = new Renderer();
-            _level1 = new Level(8,25,_wall, _floor);
+            _level1 = new Level(25,100,_wall, _floor, _inputHandler);
         }
 
         public void Start()
@@ -43,31 +45,31 @@ namespace SnakeMiniGame.Code.GameShake
                 float deltaTime = (float)(startTime - lastTime).TotalSeconds;
 
                 lastTime = startTime;
-                Input();
-                UpdateLogic();
-                Render();
 
-                var nextTime = startTime + TimeSpan.FromSeconds(deltaTime);
-                var endTime = DateTime.Now;
-                if (nextTime > endTime) 
-                {
-                    Thread.Sleep((int)(nextTime - endTime).TotalMilliseconds);
-                }
+                Input();
+                Render();
+                UpdateLogic(deltaTime);
+
+
+                //var nextTime = startTime + TimeSpan.FromSeconds(deltaTime);
+                //var endTime = DateTime.Now;
+                //if (nextTime > endTime) 
+                //{
+                    Thread.Sleep(33);
+                //}
 
             }
-
-            Console.ReadKey();
         }
 
-        private void UpdateLogic()
+        private void UpdateLogic(float deltaTime)
         {
-
+            _level1.Update(deltaTime);
         }
 
         private void Render()
         {
             _render.Debug(_inputHandler);
-            _render.Render(_level1.GetMap());
+            _render.Render(_level1, 1);
 
         }
 
@@ -79,6 +81,7 @@ namespace SnakeMiniGame.Code.GameShake
         private void CloseGame()
         {
             _inputHandler.CloseGame -= CloseGame;
+            Environment.Exit(0);
         }
     }
 }
