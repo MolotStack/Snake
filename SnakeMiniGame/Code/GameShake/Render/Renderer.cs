@@ -1,12 +1,15 @@
-﻿using SnakeMiniGame.Code.GameShake.Interfaces;
-using SnakeMiniGame.Code.GameShake.Snake;
-using SnakeMiniGame.Code.GameShake.Utilits;
+﻿using SnakeMiniGame.Code.GameShake.Entity;
+using SnakeMiniGame.Code.GameShake.Levels;
+using SnakeMiniGame.Code.GameShake.Snakes;
+using System.Drawing;
+using System.Xml.Linq;
 
-namespace SnakeMiniGame.Code.GameShake
+namespace SnakeMiniGame.Code.GameShake.Render
 {
     public class Renderer
     {
         private string _direction;
+        private int _score;
 
         private int _sizeMapY;
         private int _sizeMapX;
@@ -27,7 +30,7 @@ namespace SnakeMiniGame.Code.GameShake
 
             Console.CursorVisible = false;
 
-            //InfoRender();
+
 
             if (!_isRenderingMap)
             {
@@ -36,9 +39,11 @@ namespace SnakeMiniGame.Code.GameShake
                 _isRenderingMap = true;
             }
 
-            RanderSnake(_level.Snake);
+            RenderApple(_level.Apple);
 
+            RenderSnake(_level.Snake);
             DebugRender(_sizeMapY);
+            InfoRender(_sizeMapY);
         }
 
         private void RenderAllStaticMap(ILevel level)
@@ -63,26 +68,59 @@ namespace SnakeMiniGame.Code.GameShake
             }
         }
 
-        private void RanderSnake(IEntity entity)
+        private void RenderSnake(Snake snake)
         {
-            Console.SetCursorPosition(entity.LastPosition.x, entity.LastPosition.y);
-            Console.BackgroundColor = entity.BackgroundColor;
-            Console.ForegroundColor = entity.Color;
+            Console.SetCursorPosition(snake.LastPosition.x, snake.LastPosition.y);
+            Console.BackgroundColor = snake.BackgroundColor;
+            Console.ForegroundColor = snake.Color;
             Console.Write(" ");
 
-            Console.SetCursorPosition(entity.CurrentPosition.x, entity.CurrentPosition.y);
+            Console.SetCursorPosition(snake.CurrentPosition.x, snake.CurrentPosition.y);
 
-            Console.Write(entity.Sprite[0, 0]);
+            Console.Write(snake.Sprite[0, 0]);
+            if (snake.Tail == null) 
+            {
+                return;
+            }
+            RenderTail(snake.Tail);
+        }
+        private void RenderTail(Tail tail) 
+        {
+            Console.SetCursorPosition(tail.LastPosition.x, tail.LastPosition.y);
+            Console.BackgroundColor = tail.BackgroundColor;
+            Console.ForegroundColor = tail.Color;
+            Console.Write(" ");
+            Console.SetCursorPosition(tail.CurrentPosition.x, tail.CurrentPosition.y);
+            Console.Write(tail.Sprite[0, 0]);
+            if (tail.tail == null)
+            {
+                return;
+            }
+            RenderTail(tail.tail);
         }
 
-        private void InfoRender()
+        private void RenderApple(Apple apple)
         {
-            Console.WriteLine("Очки");
+            Console.SetCursorPosition(apple.CurrentPosition.x, apple.CurrentPosition.y);
+            Console.BackgroundColor = apple.BackgroundColor;
+            Console.ForegroundColor = apple.Color;
+            Console.Write(apple.Sprite[0, 0]);
+
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
+        private void InfoRender(int pointY)
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.SetCursorPosition(0, pointY);
+            Console.WriteLine("Очки  " + _score);
             Console.Write("________________________________________________________");
         }
         private void DebugRender(int pointY)
         {
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.SetCursorPosition(0, pointY + 2);
             Console.WriteLine("________________________________________________________");
             Console.WriteLine("                                                        ");
@@ -93,6 +131,11 @@ namespace SnakeMiniGame.Code.GameShake
         public void Debug(IInput input)
         {
             _direction = input.Direction.ToString();
+        }
+
+        public void Score(int score)
+        {
+            _score = score;
         }
     }
 }

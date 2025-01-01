@@ -1,5 +1,5 @@
 ﻿
-namespace SnakeMiniGame.Code.GameShake.Snake
+namespace SnakeMiniGame.Code.GameShake.Snakes
 {
     public abstract class BaseComponent
     {

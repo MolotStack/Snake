@@ -1,9 +1,8 @@
-﻿
-using SnakeMiniGame.Code.Game;
-using SnakeMiniGame.Code.GameShake.Cells;
+﻿using SnakeMiniGame.Code.GameShake.Input;
+using SnakeMiniGame.Code.GameShake.Levels;
 using SnakeMiniGame.Code.GameShake.Utilits;
-using System.ComponentModel.DataAnnotations;
-
+using SnakeMiniGame.Code.GameShake.Cells;
+using SnakeMiniGame.Code.GameShake.Render;
 
 namespace SnakeMiniGame.Code.GameShake
 {
@@ -15,9 +14,7 @@ namespace SnakeMiniGame.Code.GameShake
 
         private Cell _wall = new Cell(Vector2Int.zero, new char[,] { { '#' } }, true,ConsoleColor.Blue, ConsoleColor.Black);
 
-        private Cell _floor = new Cell(Vector2Int.zero, new char[,] { { ' ' } }, false, ConsoleColor.White, ConsoleColor.DarkGray);
-
-        //private Entity _snake = new Entity(Vector2Int.zero, new char[,] { {'■'} },false, false, ConsoleColor.Green, ConsoleColor.DarkGray);
+        private Cell _floor = new Cell(Vector2Int.zero, new char[,] { { ' ' } }, false, ConsoleColor.White, ConsoleColor.Black);
 
         public Game()
         {
@@ -47,9 +44,8 @@ namespace SnakeMiniGame.Code.GameShake
                 lastTime = startTime;
 
                 Input();
-                Render();
                 UpdateLogic(deltaTime);
-
+                Render();
 
                 //var nextTime = startTime + TimeSpan.FromSeconds(deltaTime);
                 //var endTime = DateTime.Now;
@@ -69,6 +65,7 @@ namespace SnakeMiniGame.Code.GameShake
         private void Render()
         {
             _render.Debug(_inputHandler);
+            _render.Score(_level1.Score);
             _render.Render(_level1, 1);
 
         }
