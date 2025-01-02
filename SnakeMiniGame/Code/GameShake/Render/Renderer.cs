@@ -10,23 +10,21 @@ namespace SnakeMiniGame.Code.GameShake.Render
     {
         private string _direction;
         private int _score;
+        private int _winScore;
 
         private int _sizeMapY;
         private int _sizeMapX;
-        private int _sizeCells;
 
         private bool _isRenderingMap = false;
 
         private ILevel _level;
 
-        public void Render(ILevel level, int sizyCells)
+        public void Render(ILevel level)
         {
             _level = level;
 
-            _sizeCells = sizyCells;
-
-            _sizeMapY = _level.Map.GetLength(0) * _sizeCells;
-            _sizeMapX = _level.Map.GetLength(1) * _sizeCells;
+            _sizeMapY = _level.Map.GetLength(0);
+            _sizeMapX = _level.Map.GetLength(1);
 
             Console.CursorVisible = false;
 
@@ -44,6 +42,21 @@ namespace SnakeMiniGame.Code.GameShake.Render
             RenderSnake(_level.Snake);
             DebugRender(_sizeMapY);
             InfoRender(_sizeMapY);
+        }
+
+        public void RenderLoadScene(string nameLevel, ConsoleColor color)
+        {
+            Console.CursorVisible = true;
+            Console.Clear();
+            Console.SetCursorPosition(50, 15);
+            Console.ForegroundColor = color;
+            Console.WriteLine(nameLevel);
+        }
+        public void ClearRender()
+        {
+            _isRenderingMap = false;
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
         }
 
         private void RenderAllStaticMap(ILevel level)
@@ -114,7 +127,7 @@ namespace SnakeMiniGame.Code.GameShake.Render
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.SetCursorPosition(0, pointY);
-            Console.WriteLine("Очки  " + _score);
+            Console.WriteLine("Счет: " + _score + " из " + _winScore);
             Console.Write("________________________________________________________");
         }
         private void DebugRender(int pointY)
@@ -133,9 +146,10 @@ namespace SnakeMiniGame.Code.GameShake.Render
             _direction = input.Direction.ToString();
         }
 
-        public void Score(int score)
+        public void Score(int score, int winScore)
         {
             _score = score;
+            _winScore = winScore;
         }
     }
 }

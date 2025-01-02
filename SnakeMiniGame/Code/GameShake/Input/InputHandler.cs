@@ -44,6 +44,13 @@ namespace SnakeMiniGame.Code.GameShake.Input
 
         }
 
+        public void SetDefaulDirection()
+        {
+            _currentDirection = Vector2Int.left;
+            _isHorizontalMove = true;
+            _isVerticalMove = false;
+        }
+
         private void DirectionHorizontal(Vector2Int direction)
         {
             if (_isVerticalMove)

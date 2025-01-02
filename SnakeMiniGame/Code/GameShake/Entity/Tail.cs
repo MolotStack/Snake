@@ -32,7 +32,7 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
             _backgroundColor = backgroundColor;
         }
 
-        public void SetPosition(Vector2Int position, Level currentLevel)
+        public void SetPosition(Vector2Int position, BaseLevel currentLevel)
         {   
             _lastPosition = _currentPosition;
             _currentPosition = position;

@@ -6,6 +6,8 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
 {
     public class Snake : BaseComponent, IEntity
     {
+        public event Action<bool> OnChangedStateDie;
+
         public string name => "Snake";
 
         public Tail Tail => _tail;
@@ -19,7 +21,7 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
 
         private Tail _tail;
         private InputHandler _input;
-        private Level _currentLevel;
+        private BaseLevel _currentLevel;
 
         private Vector2Int _currentPosition;
         private Vector2Int _lastPosition;
@@ -29,13 +31,13 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
 
         public char[,] _sprite;
 
-        private int _levelTail;
+        private float _modifierSpeed;
 
         private float _currentSpeedTime;
 
         private float _timeMove = 0.0f;
 
-        public Snake(Level currentLevel,InputHandler input, Vector2Int currentPosition, char[,] sprite, ConsoleColor color, ConsoleColor backgroundColor)
+        public Snake(BaseLevel currentLevel,InputHandler input, Vector2Int currentPosition, char[,] sprite, ConsoleColor color, ConsoleColor backgroundColor)
         {
             _input = input;
 
@@ -46,7 +48,8 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
             _sprite = sprite;
             _color = color;
             _backgroundColor = backgroundColor;
-            _currentSpeedTime = 0.20f;
+            _currentSpeedTime = 0.25f;
+            _modifierSpeed = 1.0f;
         }
 
         public override void Update(float deltaTime)
@@ -57,7 +60,7 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
         private void Movement(float deltaTime)
         {
             _timeMove += deltaTime;
-            if (_timeMove >= _currentSpeedTime)
+            if (_timeMove >= _currentSpeedTime * _modifierSpeed)
             {
                 if (!_currentLevel.Map[_currentPosition.y + _input.Direction.y, _currentPosition.x + _input.Direction.x].isOccupied)
                 {
@@ -77,9 +80,14 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
                                 LevelUp();
                                 break;
                             default:
+                                Die();
                                 break;
                         }
-                    }       
+                    }
+                    else 
+                    {
+                        Die();
+                    }
                 }
                     _timeMove = 0f;
             }
@@ -97,19 +105,24 @@ namespace SnakeMiniGame.Code.GameShake.Snakes
             {
                 _tail.SetPosition(_lastPosition, _currentLevel);
             }
-
-
         }
 
         private void LevelUp()
         {
             _currentLevel.EatApple();
+
+            if (_modifierSpeed > 0.1f)
+            {
+                _modifierSpeed -= 0.05f;
+            }
+
             Growing(ref _tail);
         }
 
         private void Die()
         {
-
+            _currentSpeedTime = 100f;
+            OnChangedStateDie?.Invoke(true);
         }
 
         private void Growing(ref Tail tail)

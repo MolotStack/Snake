@@ -6,7 +6,7 @@ namespace SnakeMiniGame.Code.GameShake
         static void Main(string[] args)
         {
             Game gameSnake = new Game();
-            gameSnake.Start();
+            gameSnake.Start(0);
         }
     }
 }
